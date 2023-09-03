@@ -46,11 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // if user not authenticated
             // get user detail from database
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            /*var isTokenValid = tokenRepository.findByToken(jwt)
-                    .map(t -> !t.isExpired() && !t.isRevoked())
-                    .orElse(false);*/
             if (jwtService.isTokenValid(jwt, userDetails)
-                    //&& isTokenValid
             ) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,

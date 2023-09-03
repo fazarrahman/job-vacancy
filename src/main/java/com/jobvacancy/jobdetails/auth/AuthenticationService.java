@@ -3,8 +3,10 @@ package com.jobvacancy.jobdetails.auth;
 import com.jobvacancy.jobdetails.config.JwtService;
 import com.jobvacancy.jobdetails.entity.Role;
 import com.jobvacancy.jobdetails.entity.Users;
+import com.jobvacancy.jobdetails.exception.BadRequestException;
 import com.jobvacancy.jobdetails.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +20,14 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     public AuthenticationResponse register(RegisterRequest request) {
+        if (Strings.isBlank(request.getUsername())) {
+            throw new BadRequestException("Username is required");
+        } else if (Strings.isBlank(request.getPassword())) {
+            throw new BadRequestException("Password is required");
+        } else if (Strings.isBlank(request.getEmail())) {
+            throw new BadRequestException("Email is required");
+        }
+
         var user = Users.builder()
                 .username(request.getUsername())
                 .firstname(request.getFirstname())
@@ -34,6 +44,12 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        if (Strings.isBlank(request.getUsername())) {
+            throw new BadRequestException("Username is required");
+        } else if (Strings.isBlank(request.getPassword())) {
+            throw new BadRequestException("Password is required");
+        }
+        
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                     request.getUsername(),
